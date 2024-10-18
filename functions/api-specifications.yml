@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: APP-X-X-X API
+  version: 1.0.0
+servers:
+  - url: http://localhost:5001/app-x-x-x/us-central1/api
+components:
+  parameters:
+    X-API-Key:
+      name: X-API-Key
+      in: header
+      description: API key for authentication
+      required: true
+      schema:
+        type: string
+        example: RAHASIA
+  schemas:
+    user_id:
+      type: string
+      example: "yifvJ4xO7Jq74hQKkRXG"
+    user:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "xxx"
+        email:
+          type: string
+          format: email
+          example: "xxx@example.com"
+        name:
+          type: string
+          example: "xxx"
+      required:
+        - username
+        - email
+        - name
+paths:
+  /users:
+    post:
+      summary: Register a new user
+      description: Creates a user and returns their ID on success.
+      parameters:
+        - $ref: "#/components/parameters/X-API-Key"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+      responses:
+        200:
+          description: User was successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User created"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/user_id"
+    get:
+      summary: Get user details by ID  
+      description: Retrieves user info using a user ID.
+      parameters:
+        - $ref: "#/components/parameters/X-API-Key"
+        - in: query
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/user_id"
+      responses:
+        200:
+          description: Successfully retrieved user details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/user"
+                      - type: object
+                        properties:
+                          id:
+                            $ref: "#/components/schemas/user_id"
