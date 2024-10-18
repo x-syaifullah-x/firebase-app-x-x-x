@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: FIREBASE FUNCTIONS
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5001/x-test-firebase-emulator/us-central1/api
+# tags:
+#   - name: auth
+paths:
+  /test:
+    post:
+      summary: Test
+      description: Test
+      parameters:
+        - required: true
+          in: header
+          name: X-API-Key
+          schema:
+            type: string
+            example: RAHASIA
+      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  format: text
+                  example: example_username
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd!
+              required:
+                - username
+                - email
+                - password
+      responses:
+        200:
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Ok."
