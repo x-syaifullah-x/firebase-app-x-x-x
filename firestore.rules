@@ -1,0 +1,40 @@
+rules_version = '2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	match /users/{uid} {
+    	allow create:	if false
+    	allow read:		if isAuthenticated()
+      allow update:	if isOwner(uid) && isVerified() && isValidField()
+      allow delete:	if false
+    }
+    
+    function isValidField() {
+    	return !('createdAt' in request.resource.data) ||
+      			 request.resource.data.createdAt == resource.data.createdAt &&
+             
+             ("updatedAt" in request.resource.data) &&
+             request.resource.data.updatedAt is int &&
+             request.resource.data.updatedAt > resource.data.updatedAt &&
+             request.resource.data.updatedAt <= request.time.toMillis() &&
+             
+             !('username' in request.resource.data) ||
+             request.resource.data.username == resource.data.username
+    }
+  }
+	
+  function isAuthenticated() {
+  	return request.auth != null
+  }
+  
+  function isOwner(uid) {
+  	return isAuthenticated() &&
+    			 request.auth.uid == uid
+  }
+  
+  function isVerified() {
+  	return isAuthenticated() &&
+    			 request.auth.token.firebase.sign_in_provider != "password" ||
+           request.auth.token.email_verified
+  }
+}

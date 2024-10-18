@@ -1,0 +1,44 @@
+name: Linux
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      BRANCH_NAME: ${{ github.ref_name }}
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Test Functions
+        working-directory: ./functions
+        run: |
+          VERSION=$(npm pkg get version | tr -d '"')
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+
+          npm install
+          npm run lint
+
+          tar cf ~/node_modules.tar.xz node_modules --use-compress-program="xz -9"
+
+      - name: Upload Artifact
+        run: |
+          _APP_VERSION="v$APP_VERSION-${BRANCH_NAME}"
+          gh release delete "${_APP_VERSION}" --yes || true
+          gh release create "${_APP_VERSION}" --title "$_APP_VERSION" --latest=true --generate-notes || true
+          gh release upload "${_APP_VERSION}" \
+          ~/node_modules.tar.xz \
+          --clobber

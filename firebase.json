@@ -1,0 +1,80 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-southeast1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "singleProjectMode": true,
+    "ui": {
+      "enabled": true
+    },
+    "hosting": {
+      "host": "localhost",
+      "port": 5000
+    },
+    "functions": {
+      "host": "localhost",
+      "port": 5001
+    },
+    "apphosting": {
+      "host": "localhost",
+      "port": 5002,
+      "rootDirectory": "/media/xxx/sdc2/xxx/Projects/ggn-sosial-media",
+      "startCommand": "npm run dev"
+    },
+    "firestore": {
+      "host": "localhost",
+      "port": 8080
+    },
+    "pubsub": {
+      "host": "localhost",
+      "port": 8085
+    },
+    "database": {
+      "host": "localhost",
+      "port": 9000
+    },
+    "auth": {
+      "host": "localhost",
+      "port": 9099
+    }
+  }
+}
